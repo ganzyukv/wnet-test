@@ -14,3 +14,6 @@
 # PHPUnit files
 /.phpunit.xml
 /.phpunit.result.cache
+
+# project environment directory
+/var/*
