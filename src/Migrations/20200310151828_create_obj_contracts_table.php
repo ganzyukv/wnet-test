@@ -18,19 +18,7 @@ class CreateObjContractsTable extends AbstractMigration
                 ->addColumn('date_sign', MysqlAdapter::PHINX_TYPE_DATE)
                 ->addColumn('staff_number', MysqlAdapter::PHINX_TYPE_STRING, ['limit' => 100])
                 ->create();
-        }else {
-            $table = $table = $this->table(self::TABLE_NAME);
         }
-
-        if (!$table->hasForeignKey('id_customer'))
-            $table->addForeignKey(['id_customer'],
-                'obj_customers',
-                'id_customer',
-                [
-                    'delete' => 'CASCADE',
-                    'update' => 'CASCADE',
-                ])
-                ->save();
     }
 
     public function down()

@@ -23,19 +23,7 @@ class CreateObjServicesTable extends AbstractMigration
                         ],
                     ])
                 ->create();
-        } else {
-            $table = $this->table(self::TABLE_NAME);
         }
-
-        $table->addForeignKey(['id_contract'],
-            'obj_contracts',
-            'id_contract',
-            [
-                'delete' => 'CASCADE',
-                'update' => 'CASCADE',
-            ])
-        ->save();
-
     }
 
     public function down()

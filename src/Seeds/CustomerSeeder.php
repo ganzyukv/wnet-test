@@ -14,6 +14,7 @@ class CustomerSeeder extends AbstractSeed
 
     public function run()
     {
+        $this->execute('SET FOREIGN_KEY_CHECKS = 0');
         $this->table(self::TABLE_NAME)->truncate();
         $faker = Faker\Factory::create();
         $data = [];
@@ -26,5 +27,6 @@ class CustomerSeeder extends AbstractSeed
         }
 
         $this->table(self::TABLE_NAME)->insert($data)->saveData();
+        $this->execute('SET FOREIGN_KEY_CHECKS = 1');
     }
 }
