@@ -39,6 +39,9 @@
     "tests": "phpunit --colors=always"
   },
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "platform": {
+      "php": ">=7.3"
+    }
   }
 }
