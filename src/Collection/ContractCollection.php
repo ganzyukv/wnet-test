@@ -6,8 +6,9 @@ namespace App\Collection;
 use App\Entity\Contract;
 use ArrayIterator;
 use IteratorAggregate;
+use JsonSerializable;
 
-class ContractCollection implements IteratorAggregate
+class ContractCollection implements IteratorAggregate, JsonSerializable
 {
     private $contracts;
 
@@ -47,5 +48,13 @@ class ContractCollection implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->contracts);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->contracts;
     }
 }

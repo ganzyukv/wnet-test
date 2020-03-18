@@ -6,8 +6,9 @@ namespace App\Collection;
 use App\Entity\Customer;
 use ArrayIterator;
 use IteratorAggregate;
+use JsonSerializable;
 
-class CustomerCollection implements IteratorAggregate
+class CustomerCollection implements IteratorAggregate, JsonSerializable
 {
     private $customers;
 
@@ -39,5 +40,13 @@ class CustomerCollection implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->customers);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->customers;
     }
 }

@@ -5,8 +5,9 @@ namespace App\Entity;
 
 use App\Collection\ServiceCollection;
 use DateTime;
+use JsonSerializable;
 
-final class Contract
+final class Contract implements JsonSerializable
 {
     private $id_contract;
     private $id_customer;
@@ -18,6 +19,27 @@ final class Contract
     public function __construct()
     {
         $this->services = new ServiceCollection();
+    }
+
+    public function addService(Service $service): void
+    {
+        $this->services->addService($service);
+    }
+
+    public function __set($name, $value)
+    {
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id_contract'  => $this->getIdContract(),
+            'id_customer'  => $this->getIdCustomer(),
+            'date_sign'    => $this->getDateSign(),
+            'number'       => $this->getNumber(),
+            'stuff_number' => $this->getStaffNumber(),
+            'services'     => $this->getServices(),
+        ];
     }
 
     /**
@@ -41,7 +63,7 @@ final class Contract
      */
     public function getIdCustomer(): int
     {
-        return $this->id_customer;
+        return (int)$this->id_customer;
     }
 
     /**
@@ -50,6 +72,22 @@ final class Contract
     public function setIdCustomer(int $id_customer): void
     {
         $this->id_customer = $id_customer;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateSign(): ?DateTime
+    {
+        return DateTime::createFromFormat('Y-m-d', $this->date_sign);
+    }
+
+    /**
+     * @param string $date_sign
+     */
+    public function setDateSign(string $date_sign): void
+    {
+        $this->date_sign = DateTime::createFromFormat('Y-m-d', $date_sign);
     }
 
     /**
@@ -66,22 +104,6 @@ final class Contract
     public function setNumber(string $number): void
     {
         $this->number = $number;
-    }
-
-    /**
-     * @param string $date_sign
-     */
-    public function setDateSign(string $date_sign): void
-    {
-        $this->date_sign = DateTime::createFromFormat('Y-m-d', $date_sign);
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDateSign(): ?DateTime
-    {
-        return DateTime::createFromFormat('Y-m-d', $this->date_sign);
     }
 
     /**
@@ -106,14 +128,5 @@ final class Contract
     public function getServices(): ?ServiceCollection
     {
         return $this->services;
-    }
-
-    public function addService(Service $service): void
-    {
-        $this->services->addService($service);
-    }
-
-    public function __set($name, $value)
-    {
     }
 }

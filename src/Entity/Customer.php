@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Collection\ContractCollection;
+use JsonSerializable;
 
-final class Customer
+final class Customer implements JsonSerializable
 {
     const COMPANY_1 = 'company_1';
     const COMPANY_2 = 'company_2';
@@ -24,21 +25,45 @@ final class Customer
         $this->contracts = new ContractCollection();
     }
 
-    /**
-     * @return string
-     */
-    public function getNameCustomer(): string
+    public function getContract(int $id_contract): ?Contract
     {
-        return $this->name_customer;
+        return $this->contracts->getContract($id_contract);
+    }
+
+    public function addContract(Contract $contract)
+    {
+        $this->contracts->addContract($contract);
+    }
+
+    public function __set($name, $value)
+    {
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id_customer'   => $this->getIdCustomer(),
+            'id_company'    => $this->getCompany(),
+            'name_customer' => $this->getNameCustomer(),
+            'contracts'     => $this->getContracts(),
+        ];
     }
 
     /**
-     * @param string $name_customer
+     * @return int
+     */
+    public function getIdCustomer(): int
+    {
+        return (int)$this->id_customer;
+    }
+
+    /**
+     * @param int $id_customer
      * @return string
      */
-    public function setNameCustomer(string $name_customer): string
+    public function setIdCustomer(int $id_customer): string
     {
-        $this->name_customer = $name_customer;
+        $this->id_customer = $id_customer;
     }
 
     /**
@@ -59,25 +84,20 @@ final class Customer
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getIdCustomer(): int
+    public function getNameCustomer(): string
     {
-        return (int)$this->id_customer;
+        return $this->name_customer;
     }
 
     /**
-     * @param int $id_customer
+     * @param string $name_customer
      * @return string
      */
-    public function setIdCustomer(int $id_customer): string
+    public function setNameCustomer(string $name_customer): string
     {
-        $this->id_customer = $id_customer;
-    }
-
-    public function getContract(int $id_contract): ?Contract
-    {
-        return $this->contracts->getContract($id_contract);
+        $this->name_customer = $name_customer;
     }
 
     /**
@@ -86,13 +106,5 @@ final class Customer
     public function getContracts(): ?ContractCollection
     {
         return $this->contracts;
-    }
-
-    public function addContract(Contract $contract){
-        $this->contracts->addContract($contract);
-    }
-
-    public function __set($name, $value)
-    {
     }
 }

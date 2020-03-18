@@ -6,8 +6,9 @@ namespace App\Collection;
 use App\Entity\Service;
 use ArrayIterator;
 use IteratorAggregate;
+use JsonSerializable;
 
-class ServiceCollection implements IteratorAggregate
+class ServiceCollection implements IteratorAggregate, JsonSerializable
 {
 
     private $services;
@@ -31,5 +32,13 @@ class ServiceCollection implements IteratorAggregate
     public function getIterator()
     {
         return new ArrayIterator($this->services);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return $this->services;
     }
 }

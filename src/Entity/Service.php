@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-final class Service
+use JsonSerializable;
+
+final class Service implements JsonSerializable
 {
     const STATUS_WORK = 'work';
     const STATUS_CONNECTING = 'connecting';
@@ -35,7 +37,7 @@ final class Service
      */
     public function getIdContract(): int
     {
-        return $this->id_contract;
+        return (int)$this->id_contract;
     }
 
     /**
@@ -80,5 +82,15 @@ final class Service
 
     public function __set($name, $value)
     {
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id_service' => $this->getIdService(),
+            'id_contract' =>$this->getIdContract(),
+            'status' =>$this->getStatus(),
+            'title_service' =>$this->getTitleService(),
+        ];
     }
 }
