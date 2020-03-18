@@ -15,7 +15,8 @@
   "require": {
     "php": ">=7.3",
     "robmorgan/phinx": "^0.11.4",
-    "symfony/dotenv": "^5.0"
+    "symfony/dotenv": "^5.0",
+    "twig/twig": "^3.0"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.14",
@@ -39,9 +40,6 @@
     "tests": "phpunit --colors=always"
   },
   "config": {
-    "sort-packages": true,
-    "platform": {
-      "php": ">=7.3"
-    }
+    "sort-packages": true
   }
 }

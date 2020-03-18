@@ -4,13 +4,19 @@ namespace App;
 
 use App\Component\Factory;
 use Symfony\Component\Dotenv\Dotenv;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
-include_once __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 (new Dotenv())->load(__DIR__ . '/../.env');
 
+$loader = new FilesystemLoader(__DIR__ . '/../src/Template');
+
+$twig = new Environment($loader);
+
 $factory = new Factory();
 
-$documents = $factory->getCustomerByContractId(200);
-dump($documents);
+$documents = $factory->createDocuments(202, 196, 200);
 
+echo $twig->render('index.html.twig', ['customers' => $documents]);

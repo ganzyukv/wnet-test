@@ -18,7 +18,18 @@ final class Factory
         $this->customerCollection = new CustomerCollection();
     }
 
-    public function getCustomerByContractId(int $id_contract): ?Customer
+    public function createDocuments(...$ids){
+        foreach ($ids as $id){
+            if(!is_integer($id)){
+                throw new \InvalidArgumentException('Argument id must be is integer');
+            }
+            $customer = $this->getCustomerByContractId($id);
+            $documents[$customer->getIdCustomer()] = $customer;
+        }
+        return $documents ?? null;
+    }
+
+    private function getCustomerByContractId(int $id_contract): ?Customer
     {
         $id_customer = $this->repository->getCustomerId($id_contract);
         $customer = $this->customerCollection->getCustomer($id_customer);

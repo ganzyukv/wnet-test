@@ -69,19 +69,19 @@ final class Contract
     }
 
     /**
-     * @return DateTime
-     */
-    public function getDateSign(): DateTime
-    {
-        return $this->date_sign;
-    }
-
-    /**
      * @param string $date_sign
      */
     public function setDateSign(string $date_sign): void
     {
         $this->date_sign = DateTime::createFromFormat('Y-m-d', $date_sign);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDateSign(): ?DateTime
+    {
+        return DateTime::createFromFormat('Y-m-d', $this->date_sign);
     }
 
     /**
@@ -101,9 +101,9 @@ final class Contract
     }
 
     /**
-     * @return ServiceCollection|Service[]
+     * @return ServiceCollection|Service[]|null
      */
-    public function getServices(): ServiceCollection
+    public function getServices(): ?ServiceCollection
     {
         return $this->services;
     }

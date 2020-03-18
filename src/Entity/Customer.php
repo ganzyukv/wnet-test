@@ -53,7 +53,7 @@ final class Customer
      * @param string $company
      * @return string
      */
-    public function setCompany($company): string
+    public function setCompany(string $company): string
     {
         $this->company = $company;
     }
@@ -67,10 +67,10 @@ final class Customer
     }
 
     /**
-     * @param string $id_customer
+     * @param int $id_customer
      * @return string
      */
-    public function setIdCustomer($id_customer): string
+    public function setIdCustomer(int $id_customer): string
     {
         $this->id_customer = $id_customer;
     }
@@ -78,6 +78,14 @@ final class Customer
     public function getContract(int $id_contract): ?Contract
     {
         return $this->contracts->getContract($id_contract);
+    }
+
+    /**
+     * @return ContractCollection|Contract[]|null
+     */
+    public function getContracts(): ?ContractCollection
+    {
+        return $this->contracts;
     }
 
     public function addContract(Contract $contract){

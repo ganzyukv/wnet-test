@@ -34,6 +34,14 @@ class ContractCollection implements IteratorAggregate
     }
 
     /**
+     * @return Contract|null
+     */
+    public function getContracts(): ?array
+    {
+        return $this->contracts ?? null;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getIterator()

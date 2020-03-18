@@ -16,7 +16,7 @@ down: ## Stop all started for development containers
 	docker-compose -f ${docker_file} down -v --remove-orphans
 
 init: ## Build container, init db and apply fixtures
-	make build up app-init migrate fixtures
+	make build up app-init migrate apply-seeds
 
 restart: ## Restart all started for development containers
 	docker-compose -f ${docker_file} restart
@@ -25,9 +25,6 @@ build: ## Build all containers
 	docker-compose -f ${docker_file} rm -vsf
 	docker-compose -f ${docker_file} down -v --remove-orphans
 	docker-compose -f ${docker_file} build
-
-fixtures: ## Loads fixtures to database.
-	docker-compose -f ${docker_file} exec ${APP_CONTAINER} ./bin/console doctrine:fixtures:load --no-interaction
 
 migrate: ## Runs application migrations.
 	docker-compose -f ${docker_file} exec ${APP_CONTAINER} php ./vendor/bin/phinx migrate
