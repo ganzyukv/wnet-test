@@ -2,7 +2,11 @@
 
 {% block body %}
     <form id="form" action="index.php">
-        <input type="text" name="contract" class="form-control">
+        <div>
+            <label for="contract">Contract ID / number</label>
+        <input type="text" name="contract" class="form-control" id="contract" placeholder="Contract ID OR contract number">
+        </div>
+        Service status:
         <div class="form-check">
             <input class="form-check-input" type="checkbox" name="status[]" value="work" id="work">
             <label class="form-check-label" for="work">

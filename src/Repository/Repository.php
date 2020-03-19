@@ -26,7 +26,7 @@ final class Repository
     {
         $result = $this->connection->query("SELECT id_customer                                              
                                             FROM obj_contracts
-                                            WHERE id_contract = $id_contract");
+                                            WHERE id_contract = $id_contract OR number = $id_contract");
         $row = $result->fetch_object();
 
         return (int)$row->id_customer ?? null;
@@ -63,7 +63,7 @@ final class Repository
             $sqlWhere .= ' AND status IN (' . $statuses . ')';
         }
         if (!empty($id_contract)) {
-            $sqlWhere .= ' AND obj_services.id_contract = ' . $id_contract;
+            $sqlWhere .= ' AND (obj_services.id_contract = ' . $id_contract . ' OR number = ' . $id_contract .')';
         }
 
         $sqlQuery = "SELECT obj_customers.*,
@@ -73,10 +73,11 @@ final class Repository
                             staff_number,
                             obj_services.*
                             FROM obj_contracts
-                                        LEFT join obj_customers ON obj_customers.id_customer = obj_contracts.id_customer
-                                        LEFT join obj_services ON obj_services.id_contract = obj_contracts.id_contract
+                                        LEFT JOIN obj_customers ON obj_customers.id_customer = obj_contracts.id_customer
+                                        LEFT JOIN obj_services ON obj_services.id_contract = obj_contracts.id_contract
                              WHERE obj_contracts.id_contract IN (SELECT obj_services.id_contract
                                                                  FROM obj_services 
+                                                                 LEFT JOIN obj_contracts ON obj_services.id_contract = obj_contracts.id_contract
                                                                  WHERE $sqlWhere)";
         $this->result = $this->connection->query($sqlQuery);
     }
