@@ -15,20 +15,114 @@
 
         {% endblock %}
     </div>
+    <div id="result"></div>
 </main>
 
 <footer>
 
 </footer>
-
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+
+<script type="application/javascript">
+    $(document).ready(function () {
+        $("#form").validate({
+            rules: {
+                contract: {
+                    required: true,
+                    digits: true
+                }
+            }
+        });
+
+        $("#form").submit(function (e) {
+            e.preventDefault();
+            var form = $(this);
+            if (form.valid()) {
+
+                var url = form.attr('action');
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: form.serialize(),
+                    success: function (data) {
+                        var card = createDocument(data);
+                        if (!data.error) {
+                            $("#result").html(card);
+                        } else {
+                            alert(data.error.msg);
+                        }
+                    }
+                });
+            } else {
+                alert('Enter valid data for search');
+                e.preventDefault();
+            }
+        });
+
+        function createDocument(jsonDocument) {
+            var services = '';
+            var contracts = '';
+            var card = "<table class=\"table table-bordered\">" +
+                "<tr><td colspan=2 class=\"text-center text-uppercase\"><b>информация про клиента</b></td>" +
+                "<tr>\n" +
+                "<td>название клиента</td>\n" +
+                "<td>" + jsonDocument.name_customer + "</td>\n" +
+                "</tr>" +
+                "<tr>\n" +
+                "<td>компания</td>\n" +
+                "<td>" + jsonDocument.company + "</td>\n" +
+                "</tr>" +
+                "<tr>\n" +
+                "<td colspan=\"2\"> " + getContracts(jsonDocument.contracts) + " </td>\n</tr>" +
+                "</table>";
+
+            return card;
+        }
+
+        function getContracts(contracts) {
+            var result = '';
+            $.each(contracts, function (key, contract) {
+                result += "<table class=\"table table-bordered\">\n" +
+                    "                    <tr>\n" +
+                    "                        <td colspan=2 class=\"text-center text-uppercase\"><b>информация про договор</b>\n" +
+                    "                        </td>\n" +
+                    "                    </tr>\n" +
+                    "                    <tr>\n" +
+                    "                        <td>номер договора</td>\n" +
+                    "                        <td>" + contract.number + "</td>\n" +
+                    "                    </tr>\n" +
+                    "                    <tr>\n" +
+                    "                        <td>дата подписания</td>\n" +
+                    "                        <td>" + contract.date_sign.date + "</td>\n" +
+                    "                    </tr>\n" +
+                    "                    <tr>\n" +
+                    "                        <td colspan='2' class=\"text-center text-uppercase\"><b>информация про сервисы</b>\n" +
+                    "                        </td>\n" +
+                    "                    </tr>\n" +
+                    "                    <tr>\n" +
+                    "                        <td colspan='2'>" + getServices(contract.services) + "</td>\n" +
+                    "                    </tr>\n" +
+                    "                </table>";
+            });
+            return result;
+        }
+
+        function getServices(services) {
+            var result = '';
+            $.each(services, function (key, service) {
+                result += service.title_service + "<br>";
+            });
+            return result;
+        }
+    });
+</script>
 </body>
 </html>

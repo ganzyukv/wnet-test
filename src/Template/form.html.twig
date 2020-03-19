@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <form id="form" action="index.php">
+        <input type="text" name="contract" class="form-control">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="status[]" value="work" id="work">
+            <label class="form-check-label" for="work">
+                Work
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="status[]" value="connecting" id="connecting">
+            <label class="form-check-label" for="connecting">
+                Connecting
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="status[]" value="disconnected" id="disconnected">
+            <label class="form-check-label" for="disconnected">
+                Disconnected
+            </label>
+        </div>
+        <input type="hidden" name="form" value="1">
+        <input type="submit" class="btn btn-success" value="Search">
+    </form>
+{% endblock %}

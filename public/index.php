@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Component\Factory;
+use Exception;
 use Symfony\Component\Dotenv\Dotenv;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -17,6 +18,21 @@ $twig = new Environment($loader);
 
 $factory = new Factory();
 
-$documents = $factory->createDocuments(202, 196, 200);
-
-echo $twig->render('index.html.twig', ['customers' => $documents]);
+if (!isset($_POST['form'])) {
+    echo $twig->render('form.html.twig');
+} else {
+    $id_contract = (int)$_POST['contract'];
+    $contractStatuses = $_POST['status'] ?? [];
+    header('Content-Type: application/json');
+    try {
+        $documents = $factory->createDocument($id_contract, $contractStatuses);
+        echo json_encode($documents);
+    } catch (Exception $e) {
+        echo json_encode([
+            'error' => [
+                'msg'  => $e->getMessage(),
+                'code' => $e->getCode(),
+            ],
+        ]);
+    }
+}

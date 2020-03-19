@@ -43,7 +43,7 @@ final class Customer implements JsonSerializable
     {
         return [
             'id_customer'   => $this->getIdCustomer(),
-            'id_company'    => $this->getCompany(),
+            'company'       => $this->getCompany(),
             'name_customer' => $this->getNameCustomer(),
             'contracts'     => $this->getContracts(),
         ];

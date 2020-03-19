@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Collection\ServiceCollection;
 use App\Entity\Contract;
 use App\Entity\Customer;
 use App\Entity\Service;
@@ -34,25 +33,57 @@ final class Repository
 
     }
 
-    public function findContract(int $id_contract): ?Contract
+    public function findContractByQuery(array $query): ?Contract
     {
-        $this->getDataByContractId($id_contract);
+        $this->getData($query);
         /** @var Contract $contract */
         $contract = $this->result->fetch_object(Contract::class);
         $this->result->data_seek(0);
 
         /** @var Service $service */
         while ($service = $this->result->fetch_object(Service::class)) {
-            if($service) {
+            if ($service) {
                 $contract->addService($service);
             }
         }
         return $contract;
     }
 
-    public function findCustomerByContractId(int $id_contract): ?Customer
+    private function getData(array $query)
     {
-        $this->getDataByContractId($id_contract);
+
+        $statusesArr = array_map(function ($value) {
+            return "'" . $this->connection->escape_string($value) . "'";
+        }, $query['status']);
+
+        $statuses = implode(',', $statusesArr);
+        $id_contract = (int)$query['id_contract'];
+        $sqlWhere = '1';
+        if (!empty($statuses)) {
+            $sqlWhere .= ' AND status IN (' . $statuses . ')';
+        }
+        if (!empty($id_contract)) {
+            $sqlWhere .= ' AND obj_services.id_contract = ' . $id_contract;
+        }
+
+        $sqlQuery = "SELECT obj_customers.*,
+                            obj_contracts.id_contract,
+                            number,
+                            date_sign,
+                            staff_number,
+                            obj_services.*
+                            FROM obj_contracts
+                                        LEFT join obj_customers ON obj_customers.id_customer = obj_contracts.id_customer
+                                        LEFT join obj_services ON obj_services.id_contract = obj_contracts.id_contract
+                             WHERE obj_contracts.id_contract IN (SELECT obj_services.id_contract
+                                                                 FROM obj_services 
+                                                                 WHERE $sqlWhere)";
+        $this->result = $this->connection->query($sqlQuery);
+    }
+
+    public function findCustomerByQuery(array $query): ?Customer
+    {
+        $this->getData($query);
 
         if (!$this->result->num_rows) {
             return null;
@@ -66,29 +97,16 @@ final class Repository
 
         /** @var Service $service */
         while ($service = $this->result->fetch_object(Service::class)) {
-            if($service->getIdService()) {
+            if ($service->getIdService()) {
                 $contract->addService($service);
             }
         }
 
-        if($contract) {
+        if ($contract) {
             $customer->addContract($contract);
         }
 
         return $customer;
-    }
-
-    private function getDataByContractId(int $id_contract){
-        $this->result = $this->connection->query("SELECT obj_customers.*,
-                                                   obj_contracts.id_contract,
-                                                   number,
-                                                   date_sign,
-                                                   staff_number,
-                                                   obj_services.*
-                                            FROM obj_contracts
-                                                     LEFT join obj_customers ON obj_customers.id_customer = obj_contracts.id_customer
-                                                     LEFT join obj_services ON obj_services.id_contract = obj_contracts.id_contract
-                                            WHERE obj_contracts.id_contract = $id_contract");
     }
 
 }

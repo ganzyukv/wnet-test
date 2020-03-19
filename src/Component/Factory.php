@@ -5,7 +5,9 @@ namespace App\Component;
 
 use App\Collection\CustomerCollection;
 use App\Entity\Customer;
+use App\Exception\NotFoundHttpException;
 use App\Repository\Repository;
+use Exception;
 
 final class Factory
 {
@@ -18,29 +20,31 @@ final class Factory
         $this->customerCollection = new CustomerCollection();
     }
 
-    public function createDocuments(...$ids){
-        foreach ($ids as $id){
-            if(!is_integer($id)){
-                throw new \InvalidArgumentException('Argument id must be is integer');
-            }
-            $customer = $this->getCustomerByContractId($id);
-            $documents[$customer->getIdCustomer()] = $customer;
-        }
-        return $documents ?? null;
+    public function createDocument(int $id_contract, array $serviceStatus = []): ?Customer
+    {
+        $customer = $this->getCustomerByQuery(['id_contract' => $id_contract, 'status' => $serviceStatus]);
+        return $customer ?? null;
     }
 
-    private function getCustomerByContractId(int $id_contract): ?Customer
+    private function getCustomerByQuery(array $query): ?Customer
     {
+        $id_contract = $query['id_contract'];
         $id_customer = $this->repository->getCustomerId($id_contract);
+        if (empty($id_customer)) {
+            throw new NotFoundHttpException('Customer with contract not found');
+        }
         $customer = $this->customerCollection->getCustomer($id_customer);
 
         if ($customer) {
             if (empty($customer->getContract($id_contract))) {
-                $contract = $this->repository->findContract($id_contract);
+                $contract = $this->repository->findContractByQuery($query);
                 $customer->addContract($contract);
             }
         } else {
-            $customer = $this->repository->findCustomerByContractId($id_contract);
+            $customer = $this->repository->findCustomerByQuery($query);
+            if (!$customer) {
+                throw new NotFoundHttpException('Contract not found');
+            }
             $this->customerCollection->addCustomer($customer);
         }
 
